@@ -49,4 +49,15 @@ fn main() {
     // is not very expensive right now.
     println!("cargo:rerun-if-changed=./");
     man();
+
+
+
+	let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+
+	if target_os == "hermit" {
+		println!("cargo::rerun-if-changed=src/alloc.c");
+		cc::Build::new().file("src/alloc.c").compile("foo");
+		println!("cargo:rustc-link-lib=static=c");
+		println!("cargo:rustc-link-search=native=/opt/hermit/x86_64-hermit/lib");
+	}
 }

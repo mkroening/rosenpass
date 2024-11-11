@@ -1,12 +1,12 @@
-pub mod memsec;
+// pub mod memsec;
 
 use std::sync::OnceLock;
 
 use allocator_api2::alloc::{AllocError, Allocator};
-use memsec::malloc::MallocAllocator;
+// use memsec::malloc::MallocAllocator;
 
-#[cfg(target_os = "linux")]
-use memsec::memfdsec::MemfdSecAllocator;
+// #[cfg(target_os = "linux")]
+// use memsec::memfdsec::MemfdSecAllocator;
 
 static ALLOC_TYPE: OnceLock<SecretAllocType> = OnceLock::new();
 
@@ -28,45 +28,7 @@ pub enum SecretAllocType {
     MemsecMemfdSec,
 }
 
-pub struct SecretAlloc {
-    alloc_type: SecretAllocType,
-}
-
-impl Default for SecretAlloc {
-    fn default() -> Self {
-        Self {
-            alloc_type: *ALLOC_TYPE.get().expect(
-                "Secret security policy not specified. \
-                Run the specifying policy function in \
-                 rosenpass_secret_memory::policy or set a \
-                 custom policy by initializing \
-                 rosenpass_secret_memory::alloc::ALLOC_TYPE \
-                 before using secrets",
-            ),
-        }
-    }
-}
-
-unsafe impl Allocator for SecretAlloc {
-    fn allocate(
-        &self,
-        layout: std::alloc::Layout,
-    ) -> Result<std::ptr::NonNull<[u8]>, allocator_api2::alloc::AllocError> {
-        match self.alloc_type {
-            SecretAllocType::MemsecMalloc => MallocAllocator::default().allocate(layout),
-            #[cfg(target_os = "linux")]
-            SecretAllocType::MemsecMemfdSec => MemfdSecAllocator::default().allocate(layout),
-        }
-    }
-
-    unsafe fn deallocate(&self, ptr: std::ptr::NonNull<u8>, layout: std::alloc::Layout) {
-        match self.alloc_type {
-            SecretAllocType::MemsecMalloc => MallocAllocator::default().deallocate(ptr, layout),
-            #[cfg(target_os = "linux")]
-            SecretAllocType::MemsecMemfdSec => MemfdSecAllocator::default().deallocate(ptr, layout),
-        }
-    }
-}
+pub use allocator_api2::alloc::Global as SecretAlloc;
 
 pub type SecretBox<T> = allocator_api2::boxed::Box<T, SecretAlloc>;
 

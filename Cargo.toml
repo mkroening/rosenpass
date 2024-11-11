@@ -64,7 +64,7 @@ chacha20poly1305 = { version = "0.10.1", default-features = false, features = [
 zerocopy = { version = "0.7.35", features = ["derive"] }
 home = "0.5.9"
 derive_builder = "0.20.1"
-tokio = { version = "1.40", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.40", features = ["macros"] }
 postcard = { version = "1.0.10", features = ["alloc"] }
 libcrux = { version = "0.0.2-pre.2" }
 hex-literal = { version = "0.4.1" }
@@ -88,3 +88,8 @@ procspawn = { version = "1.0.1", features = ["test-support"] }
 wireguard-uapi = { version = "3.0.0", features = ["xplatform"] }
 command-fds = "0.2.3"
 rustix = { version = "0.38.37", features = ["net", "fs"] }
+
+[patch.crates-io]
+socket2 = { git = "https://github.com/hermit-os/socket2.git", branch = "v/0.5.7" }
+tokio = { git = "https://github.com/hermit-os/tokio.git", branch = "v/tokio-1.40.0" }
+oqs-sys = { path = "../liboqs-rust/oqs-sys" }

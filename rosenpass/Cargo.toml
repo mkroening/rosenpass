@@ -50,7 +50,7 @@ clap = { workspace = true }
 mio = { workspace = true }
 rand = { workspace = true }
 zerocopy = { workspace = true }
-home = { workspace = true }
+# home = { workspace = true }
 derive_builder = { workspace = true }
 rosenpass-wireguard-broker = { workspace = true }
 zeroize = { workspace = true }
@@ -58,11 +58,14 @@ hex-literal = { workspace = true, optional = true }
 hex = { workspace = true, optional = true }
 heck = { workspace = true, optional = true }
 command-fds = { workspace = true, optional = true }
-rustix = { workspace = true }
 uds = { workspace = true, optional = true, features = ["mio_1xx"] }
+
+[target.'cfg(target_os = "hermit")'.dependencies]
+hermit = { path = "../../hermit-rs/hermit", features = [] }
 
 [build-dependencies]
 anyhow = { workspace = true }
+cc = "1"
 
 [dev-dependencies]
 criterion = { workspace = true }
@@ -74,7 +77,7 @@ tempfile = { workspace = true }
 rustix = { workspace = true }
 
 [features]
-default = ["experiment_api"]
+default = []
 experiment_memfd_secret = ["rosenpass-wireguard-broker/experiment_memfd_secret"]
 experiment_libcrux = ["rosenpass-ciphers/experiment_libcrux"]
 experiment_api = [

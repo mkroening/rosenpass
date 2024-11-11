@@ -196,8 +196,8 @@ where
                 .pop_front()
                 .context("Invalid request – socket missing.")?;
             // TODO: We need to have this outside linux
-            #[cfg(target_os = "linux")]
-            rosenpass_util::fd::GetSocketProtocol::demand_udp_socket(&sock)?;
+            // #[cfg(target_os = "linux")]
+            // rosenpass_util::fd::GetSocketProtocol::demand_udp_socket(&sock)?;
             let sock = std::net::UdpSocket::from(sock);
             sock.set_nonblocking(true)?;
             mio::net::UdpSocket::from_std(sock).ok()

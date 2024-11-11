@@ -1,7 +1,24 @@
+#[cfg(target_os = "hermit")]
+use hermit as _;
+
 use clap::Parser;
 use log::error;
 use rosenpass::cli::CliArgs;
 use std::process::exit;
+
+#[cfg(target_os = "hermit")]
+#[no_mangle]
+pub unsafe extern "C" fn getentropy(buf: *mut u8, len: usize) -> i32 {
+	extern "C" {
+		fn sys_read_entropy(buf: *mut u8, len: usize, flags: u32) -> isize;
+	}
+
+	let code = unsafe {
+		sys_read_entropy(buf, len, 0)
+	};
+	assert!(code >= 0);
+	0
+}
 
 /// Catches errors, prints them through the logger, then exits
 pub fn main() {
